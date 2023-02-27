@@ -9,8 +9,12 @@ from pyxlsb import open_workbook as open_xlsb
 from datetime import datetime
 import calendar
 
+
 # Page Settings
 st.set_page_config(page_title='Spend Analyser',page_icon=':smile:',layout="wide")
+
+url_saving='https://drive.google.com/uc?export=download&id=1IINDYx3LOWVe-Kjv-8ohFksvPHw_87h8'
+url_credit='https://drive.google.com/uc?export=download&id=1XWcrAQzwxNYHpKRMoFAp91GBTEaWgxb7'
 
 # CSS
 hide_st_style = """
@@ -106,16 +110,17 @@ def process_cc_statement(cc_df):
 
 # Scripting 
 with st.sidebar:
-    st.info("Upload your Credit Card Statement")
+    st.info("Upload your Credit Card statement or try this sample file [link](%s)" % url_credit)
     cc=st.file_uploader('',type=['xlsx'],key='cc')
 
-st.success('Axis Bank Credit Card Analyser')
-
+st.title('Axis Bank Credit Card Analyser')
 if cc:
-    cc_df = pd.read_excel(cc)
-    cc_df=process_cc_statement(cc_df)
-    st.write(cc_df)
-
+    try:
+        cc_df = pd.read_excel(cc)
+        cc_df=process_cc_statement(cc_df)
+        st.write(cc_df)
+    except:
+        st.warning('Please enter the correct statement file')
 
 st.markdown('---')
-st.markdown('Made by Sahil')
+st.markdown('Made with :heart: by [Sahil Choudhary](https://www.sahilchoudhary.ml/)')

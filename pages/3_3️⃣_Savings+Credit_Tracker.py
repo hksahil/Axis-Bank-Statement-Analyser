@@ -192,68 +192,71 @@ with st.sidebar:
 
 st.title('Axis Bank Account Analyser')
 if ss and cc:
-    ss_df = pd.read_excel(ss)
-    ss_df=process_savings_acc_statement(ss_df)
+    try:
+        ss_df = pd.read_excel(ss)
+        ss_df=process_savings_acc_statement(ss_df)
 
-    cc_df = pd.read_excel(cc)
-    cc_df=process_cc_statement(cc_df)
+        cc_df = pd.read_excel(cc)
+        cc_df=process_cc_statement(cc_df)
 
-    #---------------------------Currrent Month Analysis Starts ---------------------------
-    # Row 1 starts
-    currentMonth = datetime.now().month
-    currentYear = datetime.now().year
-    ss1=ss_df[ss_df['Year']==currentYear]
-    ss2=ss1[ss1['Month']==currentMonth]
+        #---------------------------Currrent Month Analysis Starts ---------------------------
+        # Row 1 starts
+        currentMonth = datetime.now().month
+        currentYear = datetime.now().year
+        ss1=ss_df[ss_df['Year']==currentYear]
+        ss2=ss1[ss1['Month']==currentMonth]
 
-    cc1=cc_df[cc_df['Year']==currentYear]
-    cc2=cc1[cc1['Month']==currentMonth]
-    
-    # Adding totals
-    # Debit Calculation
-    # To calculate debit of current month in best way: Follow this policy
-    ## 1. Get total of ss df while ignoring credit card payment
-    a=ss2[ss2['Transaction'].str.contains('CreditCard')==False]['Debit'].sum()
-    ## 2. Get total of cc df while ignoring credit card payment ('IB PAYMENT')
-    b=cc2['Debit'].sum()
-    ## Add 1 and 2
-    c=a+b
-    cm_debit=round(ss2['Debit'].sum(),1)
-    cm_credit=round(ss2['Credit'].sum(),1)
-    # Metrics
-    col1,col2,col3=st.columns(3)
-    col1.metric('Month',calendar.month_name[currentMonth])
-    col2.metric('Total Debit',format_currency(c, 'INR', locale='en_IN'))
-    col3.metric('Total Credit',format_currency(cm_credit, 'INR', locale='en_IN'))
+        cc1=cc_df[cc_df['Year']==currentYear]
+        cc2=cc1[cc1['Month']==currentMonth]
+        
+        # Adding totals
+        # Debit Calculation
+        # To calculate debit of current month in best way: Follow this policy
+        ## 1. Get total of ss df while ignoring credit card payment
+        a=ss2[ss2['Transaction'].str.contains('CreditCard')==False]['Debit'].sum()
+        ## 2. Get total of cc df while ignoring credit card payment ('IB PAYMENT')
+        b=cc2['Debit'].sum()
+        ## Add 1 and 2
+        c=a+b
+        cm_debit=round(ss2['Debit'].sum(),1)
+        cm_credit=round(ss2['Credit'].sum(),1)
+        # Metrics
+        col1,col2,col3=st.columns(3)
+        col1.metric('Month',calendar.month_name[currentMonth])
+        col2.metric('Total Debit',format_currency(c, 'INR', locale='en_IN'))
+        col3.metric('Total Credit',format_currency(cm_credit, 'INR', locale='en_IN'))
 
-    # Row 1 ends
-    # Row 2 starts
-    col1,col2=st.columns(2)
-    with col1:
-        st.info('Overview of Savings Account Spends')
-        ss2=ss2[ss2['Transaction'].str.contains('CreditCard')==False]
-        ss3 = ss2.groupby('Tag').sum('Debit')
-        ss3=ss3.sort_values(by=['Debit'],ascending=False)
-        ss4= ss3[['Debit','Credit']]
-        ss4.loc['Total']= ss4.sum()
-        st.dataframe(ss4)
-    with col2:
-        st.info('Overview of Credit Card Spends')
-        cc3 = cc2.groupby('Tag').sum('Debit')
-        cc3=cc3.sort_values(by=['Debit'],ascending=False)
-        cc4= cc3[['Debit','Credit']]
-        cc4.loc['Total']= cc4.sum()
-        st.dataframe(cc4)
-    # Row 2 ends
+        # Row 1 ends
+        # Row 2 starts
+        col1,col2=st.columns(2)
+        with col1:
+            st.info('Overview of Savings Account Spends')
+            ss2=ss2[ss2['Transaction'].str.contains('CreditCard')==False]
+            ss3 = ss2.groupby('Tag').sum('Debit')
+            ss3=ss3.sort_values(by=['Debit'],ascending=False)
+            ss4= ss3[['Debit','Credit']]
+            ss4.loc['Total']= ss4.sum()
+            st.dataframe(ss4)
+        with col2:
+            st.info('Overview of Credit Card Spends')
+            cc3 = cc2.groupby('Tag').sum('Debit')
+            cc3=cc3.sort_values(by=['Debit'],ascending=False)
+            cc4= cc3[['Debit','Credit']]
+            cc4.loc['Total']= cc4.sum()
+            st.dataframe(cc4)
+        # Row 2 ends
 
 
-    # Detailed Savings acc transactions + Credit card transactions
-    # Adding source to each df
-    cc3['Source']='Credit Card'
-    ss2['Source']='Savings Account'
-    combined_df = ss2.append(cc3, ignore_index=True).sort_values(by=['Debit'],ascending=False)
-    #cc12=cc11.sort_values(by=['Debit'],ascending=False)
-    st.info('Detailed Savings acc transactions + Credit card transactions')
-    st.write(combined_df)
+        # Detailed Savings acc transactions + Credit card transactions
+        # Adding source to each df
+        cc2['Source']='Credit Card'
+        ss2['Source']='Savings Account'
+        combined_df = ss2.append(cc2, ignore_index=True).sort_values(by=['Debit'],ascending=False)
+        #cc12=cc11.sort_values(by=['Debit'],ascending=False)
+        st.info('Detailed Savings acc transactions + Credit card transactions')
+        st.write(combined_df)
+    except:
+        st.warning('Please enter the correct statement files')
 
     #---------------------------Currrent Month Analysis Ends ---------------------------
     st.markdown('---')

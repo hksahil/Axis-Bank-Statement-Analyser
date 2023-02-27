@@ -8,6 +8,7 @@ from io import BytesIO
 from pyxlsb import open_workbook as open_xlsb
 from datetime import datetime
 import calendar
+from babel.numbers import format_currency
 
 # Page Settings
 st.set_page_config(page_title='Spend Analyser',page_icon=':smile:',layout="wide")

@@ -8,6 +8,7 @@ from io import BytesIO
 from pyxlsb import open_workbook as open_xlsb
 from datetime import datetime
 import calendar
+from babel.numbers import format_currency
 
 # Page Settings
 st.set_page_config(page_title='Spend Analyser',page_icon=':smile:',layout="wide")
@@ -221,8 +222,9 @@ if ss and cc:
     # Metrics
     col1,col2,col3=st.columns(3)
     col1.metric('Month',calendar.month_name[currentMonth])
-    col2.metric('Total Debit',c)
-    col3.metric('Total Credit',cm_credit)
+    col2.metric('Total Debit',format_currency(c, 'INR', locale='en_IN'))
+    col3.metric('Total Credit',format_currency(cm_credit, 'INR', locale='en_IN'))
+
 
     # Row 1 ends
     # Row 2 starts

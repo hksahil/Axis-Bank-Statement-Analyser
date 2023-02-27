@@ -9,6 +9,7 @@ from pyxlsb import open_workbook as open_xlsb
 from datetime import datetime
 import calendar
 from babel.numbers import format_currency
+import plotly.express as px
 
 # Page Settings
 st.set_page_config(page_title='Spend Analyser',page_icon=':smile:',layout="wide")
@@ -237,6 +238,7 @@ if ss and cc:
             ss4= ss3[['Debit','Credit']]
             ss4.loc['Total']= ss4.sum()
             st.dataframe(ss4)
+
         with col2:
             st.info('Overview of Credit Card Spends')
             cc3 = cc2.groupby('Tag').sum('Debit')
@@ -254,7 +256,16 @@ if ss and cc:
         combined_df = ss2.append(cc2, ignore_index=True).sort_values(by=['Debit'],ascending=False)
         #cc12=cc11.sort_values(by=['Debit'],ascending=False)
         st.info('Detailed Savings acc transactions + Credit card transactions')
+        # bar chart
+        combined_df = combined_df.sort_values('Debit', ascending=False)
+        fig = px.bar(combined_df, x="Tag", y="Debit", color="Source", text_auto=True)
+        fig.update_traces(textangle=0, textposition="outside", cliponaxis=False)
+        #fig.update_layout(yaxis={'Debit':'total ascending'}) # add only this line
+        
+        st.plotly_chart(fig, use_container_width=True)
+
         st.write(combined_df)
+        #fig.show()
     except:
         st.warning('Please enter the correct statement files')
 

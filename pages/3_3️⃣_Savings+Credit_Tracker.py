@@ -200,13 +200,11 @@ if ss and cc:
 
         #---------------------------Currrent Month Analysis Starts ---------------------------
         # Row 1 starts
-        currentMonth = datetime.now().month
-        currentYear = datetime.now().year
-        ss1=ss_df[ss_df['Year']==currentYear]
-        ss2=ss1[ss1['Month']==currentMonth]
+        ss1=ss_df[ss_df['Year']==datetime.now().year]
+        ss2=ss1[ss1['Month']==datetime.now().month]
 
-        cc1=cc_df[cc_df['Year']==currentYear]
-        cc2=cc1[cc1['Month']==currentMonth]
+        cc1=cc_df[cc_df['Year']==datetime.now().year]
+        cc2=cc1[cc1['Month']==datetime.now().month]
         
         # Adding totals
         # Debit Calculation
@@ -221,7 +219,7 @@ if ss and cc:
         cm_credit=round(ss2['Credit'].sum(),1)
         # Metrics
         col1,col2,col3=st.columns(3)
-        col1.metric('Month',calendar.month_name[currentMonth])
+        col1.metric('Month',calendar.month_name[datetime.now().month])
         col2.metric('Total Debit',format_currency(c, 'INR', locale='en_IN'))
         col3.metric('Total Credit',format_currency(cm_credit, 'INR', locale='en_IN'))
 
@@ -229,23 +227,23 @@ if ss and cc:
         # Row 2 starts
         col1,col2=st.columns(2)
         with col1:
-            st.info('Overview of Savings Account Spends')
-            ss2=ss2[ss2['Transaction'].str.contains('CreditCard')==False]
-            ss3 = ss2.groupby('Tag').sum('Debit')
-            ss3=ss3.sort_values(by=['Debit'],ascending=False)
-            ss4= ss3[['Debit','Credit']]
+            ss4 = (ss2[~ss2['Transaction'].str.contains('CreditCard')]
+            .groupby('Tag')
+            .sum('Debit')
+            .sort_values(by='Debit', ascending=False)[['Debit', 'Credit']]
+            )
             ss4=ss4.sum(axis=0).to_frame('Total').T.append(ss4)
-            #ss4.loc['Total']= ss4.sum()
             st.dataframe(ss4)
+
 
         with col2:
             st.info('Overview of Credit Card Spends')
-            cc3 = cc2.groupby('Tag').sum('Debit')
-            cc3=cc3.sort_values(by=['Debit'],ascending=False)
-            cc4= cc3[['Debit','Credit']]
-            cc4=cc4.sum(axis=0).to_frame('Total').T.append(cc4)
-            #cc4.loc['Total']= cc4.sum()
-            st.dataframe(cc4)
+            cc3 = (cc2.groupby('Tag')
+            .sum('Debit')
+            .sort_values(by=['Debit'],ascending=False)[['Debit','Credit']])
+            cc3=cc3.sum(axis=0).to_frame('Total').T.append(cc3)
+            st.dataframe(cc3)
+        
         # Row 2 ends
 
 

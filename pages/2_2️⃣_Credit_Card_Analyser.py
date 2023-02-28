@@ -100,9 +100,6 @@ def process_cc_statement(cc_df):
     cc_df['Date'] = pd.to_datetime(cc_df['Date'], format='%d %b \'%y')
     cc_df['Date'] = cc_df['Date'].dt.strftime('%Y-%m-%d')
     cc_df['Tag']=[tag(i) for i in cc_df['Transaction']]
-
-
-
     cc_df['Month'] = [int(i.split('-')[1]) for i in cc_df['Date'] ]
     cc_df['Year'] = [int(i.split('-')[0]) for i in cc_df['Date'] ]
     print(cc_df.dtypes)
@@ -111,7 +108,7 @@ def process_cc_statement(cc_df):
 # Scripting 
 with st.sidebar:
     st.info("Upload your Credit Card statement or try this sample file [link](%s)" % url_credit)
-    cc=st.file_uploader('',type=['xlsx,xls'],key='cc')
+    cc=st.file_uploader('',type=['xlsx'],key='cc')
 
 st.title('Axis Bank Credit Card Analyser')
 if cc:

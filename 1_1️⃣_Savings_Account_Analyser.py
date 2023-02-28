@@ -126,7 +126,7 @@ def process_savings_acc_statement(ss_df):
 # Scripting 
 with st.sidebar:
     st.info("Upload your Savings Account statement or try this sample file [link](%s)" % url_saving)
-    ss=st.file_uploader('',type=['xlsx,xls'],key='savings')
+    ss=st.file_uploader('',type=['xlsx'],key='savings')
 
 st.title('Axis Bank Savings Account Analyser')
 

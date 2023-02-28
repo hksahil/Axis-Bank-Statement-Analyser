@@ -227,6 +227,7 @@ if ss and cc:
         # Row 2 starts
         col1,col2=st.columns(2)
         with col1:
+            st.info('Overview of Savings Account Spends')
             ss4 = (ss2[~ss2['Transaction'].str.contains('CreditCard')]
             .groupby('Tag')
             .sum('Debit')
@@ -253,7 +254,7 @@ if ss and cc:
         ss2['Source']='Savings Account'
         combined_df = ss2.append(cc2, ignore_index=True).sort_values(by=['Debit'],ascending=False)
         #cc12=cc11.sort_values(by=['Debit'],ascending=False)
-        st.info('Detailed Savings acc transactions + Credit card transactions')
+        st.info('Detailed Savings account + Credit card transactions')
         # bar chart
         combined_df = combined_df.sort_values('Debit', ascending=False)
         #combined_df=combined_df.sum(axis=0).to_frame('Total').T.append(combined_df)

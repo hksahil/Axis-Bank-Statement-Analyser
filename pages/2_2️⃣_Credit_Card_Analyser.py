@@ -111,7 +111,7 @@ def process_cc_statement(cc_df):
 # Scripting 
 with st.sidebar:
     st.info("Upload your Credit Card statement or try this sample file [link](%s)" % url_credit)
-    cc=st.file_uploader('',type=['xlsx'],key='cc')
+    cc=st.file_uploader('',type=['xlsx,xls'],key='cc')
 
 st.title('Axis Bank Credit Card Analyser')
 if cc:

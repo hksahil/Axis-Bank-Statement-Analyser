@@ -100,8 +100,6 @@ def process_savings_acc_statement(ss_df):
 
 
     # Adding Tag column
-
-    # Zomato
     ss_df['Tag']=[tag_savings(i) for i in ss_df['Transaction']]
     
     ss_df['Month'] = [int(i.split('-')[1]) for i in ss_df['Date'] ]
@@ -236,7 +234,8 @@ if ss and cc:
             ss3 = ss2.groupby('Tag').sum('Debit')
             ss3=ss3.sort_values(by=['Debit'],ascending=False)
             ss4= ss3[['Debit','Credit']]
-            ss4.loc['Total']= ss4.sum()
+            ss4=ss4.sum(axis=0).to_frame('Total').T.append(ss4)
+            #ss4.loc['Total']= ss4.sum()
             st.dataframe(ss4)
 
         with col2:
@@ -244,7 +243,8 @@ if ss and cc:
             cc3 = cc2.groupby('Tag').sum('Debit')
             cc3=cc3.sort_values(by=['Debit'],ascending=False)
             cc4= cc3[['Debit','Credit']]
-            cc4.loc['Total']= cc4.sum()
+            cc4=cc4.sum(axis=0).to_frame('Total').T.append(cc4)
+            #cc4.loc['Total']= cc4.sum()
             st.dataframe(cc4)
         # Row 2 ends
 
@@ -258,6 +258,7 @@ if ss and cc:
         st.info('Detailed Savings acc transactions + Credit card transactions')
         # bar chart
         combined_df = combined_df.sort_values('Debit', ascending=False)
+        #combined_df=combined_df.sum(axis=0).to_frame('Total').T.append(combined_df)
         fig = px.bar(combined_df, x="Tag", y="Debit", color="Source", text_auto=True)
         fig.update_traces(textangle=0, textposition="outside", cliponaxis=False)
         #fig.update_layout(yaxis={'Debit':'total ascending'}) # add only this line
